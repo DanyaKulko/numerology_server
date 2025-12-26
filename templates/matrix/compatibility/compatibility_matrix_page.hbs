@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        :root {
+            --bar-h: 8mm;
+            --bar-color: #145833;
+            --green-dark: rgba(17, 163, 65, 1);
+            --green-main: #4fa25a;
+            --green-light: #eaf3ed;
+            --text-dark: rgba(29, 97, 59, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        @page {
+            size: A3 landscape;
+            /* size with more height than A4 land*/
+            margin: 0;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+            font-family: 'DejaVu Sans', sans-serif;
+            color: #000;
+            overflow: hidden;
+            font-size: 12px;
+        }
+
+        :root {
+            --bar-h: 8mm;
+            --bar-color: #145833;
+        }
+
+        .top-bar, .bottom-bar {
+            position: fixed;
+            left: -5px;
+            width: calc(100% + 10px);
+            height: var(--bar-h);
+            background: var(--bar-color);
+            z-index: 10;
+        }
+
+        .top-bar {
+            top: 0;
+        }
+
+        .bottom-bar {
+            bottom: -1px;
+        }
+
+        .bg-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.85)),
+            url({{{background}}}) center / cover no-repeat;
+        }
+
+        .numerlogyChart {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .shema {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            padding: 20px;
+            color: #fff;
+            position: relative;
+            width: 400px;
+            height: 400px;
+        }
+
+        .shema img {
+            width: 400px;
+            height: 400px;
+        }
+
+        .shema .circle {
+            position: absolute;
+            width: fit-content;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .shema .number {
+            width: calc(8.4px * var(--scale));
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: calc(8px * var(--scale));
+        }
+
+        .circle {
+            --scale: 1;
+        }
+
+        .circle.small {
+            height: calc(16px * var(--scale));
+            width: calc(10.4px * var(--scale));
+            font-size: calc(8.8px * var(--scale));
+            padding-bottom: calc(1.6px * var(--scale));
+            font-weight: bold;
+        }
+
+        .circle.medium {
+            height: calc(20px * var(--scale));
+            width: calc(14.16px * var(--scale));
+            font-size: calc(12px * var(--scale));
+            font-weight: bold;
+        }
+
+        .circle.mediumPlus {
+            height: calc(23.2px * var(--scale));
+            font-size: calc(12.8px * var(--scale));
+        }
+
+        .circle.large {
+            width: calc(18.88px * var(--scale));
+            font-size: calc(16px * var(--scale));
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .top1 {
+            top: 10.8%;
+            left: 47.2%;
+        }
+
+        .top2 {
+            top: 19.2%;
+            left: 47.9%;
+        }
+
+        .top3 {
+            top: 31.8%;
+            left: 48.6%;
+        }
+
+        .top4 {
+            top: 41%;
+            left: 48.7%;
+        }
+
+        .topRight1 {
+            top: 22.9%;
+            right: 18.7%;
+        }
+
+        .topRight2 {
+            top: 28.7%;
+            right: 25.2%;
+        }
+
+        .topRight3 {
+            top: 39%;
+            right: 34.4%;
+        }
+
+        .right1 {
+            top: 52.5%;
+            right: 6.5%;
+        }
+
+        .right2 {
+            top: 52.2%;
+            right: 15.2%;
+        }
+
+        .right3 {
+            top: 53%;
+            right: 28.3%;
+        }
+
+        .right4 {
+            top: 52.9%;
+            right: 35.3%;
+        }
+
+        .right5 {
+            top: 52.9%;
+            right: 39.7%;
+        }
+
+        .bottomRight1 {
+            top: 81.5%;
+            right: 18.7%;
+        }
+
+        .bottomRight2 {
+            top: 75.7%;
+            right: 25%;
+        }
+
+        .bottomRight3 {
+            top: 67.4%;
+            right: 34.7%;
+        }
+
+        .bottomRight4 {
+            top: 59.9%;
+            right: 42.3%;
+        }
+
+        .bottomRight5 {
+            top: 68%;
+            right: 43%;
+        }
+
+        .bottomRight6 {
+            top: 59%;
+            right: 34.1%;
+        }
+
+        .bottom1 {
+            top: 93.8%;
+            right: 48.2%;
+        }
+
+        .bottom2 {
+            top: 85.5%;
+            right: 48.5%;
+        }
+
+        .bottom3 {
+            top: 73.4%;
+            right: 48.9%;
+        }
+
+        .bottomLeft1 {
+            top: 82%;
+            left: 18.3%;
+        }
+
+        .bottomLeft2 {
+            top: 75.6%;
+            left: 24.3%;
+        }
+
+        .bottomLeft3 {
+            top: 67.5%;
+            left: 34.5%;
+        }
+
+        .left1 {
+            top: 52.3%;
+            left: 5.7%;
+        }
+
+        .left2 {
+            top: 52.4%;
+            left: 14.8%;
+        }
+
+        .left3 {
+            top: 53%;
+            left: 27.8%;
+        }
+
+        .left4 {
+            top: 53%;
+            left: 38%;
+        }
+
+        .topLeft1 {
+            top: 23%;
+            left: 18%;
+        }
+
+        .topLeft2 {
+            top: 28.9%;
+            left: 24.4%;
+        }
+
+        .topLeft3 {
+            top: 39%;
+            left: 33.7%;
+        }
+
+        .center {
+            top: 52.3%;
+            left: 47.4%;
+        }
+
+        .year21 {
+            top: 14.3%;
+            right: 44%;
+        }
+
+        .year22 {
+            top: 15.4%;
+            right: 41%;
+        }
+
+        .year23 {
+            top: 16.7%;
+            right: 37.7%;
+        }
+
+        .year24 {
+            top: 18%;
+            right: 34.4%;
+        }
+
+        .year25 {
+            top: 19.4%;
+            right: 31.4%;
+        }
+
+        .year26 {
+            top: 20.8%;
+            right: 28%;
+        }
+
+        .year27 {
+            top: 21.9%;
+            right: 24.8%;
+        }
+
+        .year31 {
+            top: 29.3%;
+            right: 17.4%;
+        }
+
+        .year32 {
+            top: 32.4%;
+            right: 16.3%;
+        }
+
+        .year33 {
+            top: 35.6%;
+            right: 14.8%;
+        }
+
+        .year34 {
+            top: 39%;
+            right: 13.4%;
+        }
+
+        .year35 {
+            top: 42.2%;
+            right: 12.3%;
+        }
+
+        .year36 {
+            top: 45.5%;
+            right: 10.9%;
+        }
+
+        .year37 {
+            top: 48.6%;
+            right: 9.5%;
+        }
+
+        .year41 {
+            top: 58.5%;
+            right: 9.5%;
+        }
+
+        .year42 {
+            top: 61.7%;
+            right: 10.7%;
+        }
+
+        .year43 {
+            top: 65%;
+            right: 11.8%;
+        }
+
+        .year44 {
+            top: 68.1%;
+            right: 13.3%;
+        }
+
+        .year45 {
+            top: 71.5%;
+            right: 14.6%;
+        }
+
+        .year46 {
+            top: 74.6%;
+            right: 15.9%;
+        }
+
+        .year47 {
+            top: 78%;
+            right: 17.3%;
+        }
+
+        .year51 {
+            top: 85.3%;
+            right: 24.6%;
+        }
+
+        .year52 {
+            top: 86.9%;
+            right: 27.9%;
+        }
+
+        .year53 {
+            top: 88%;
+            right: 31%;
+        }
+
+        .year54 {
+            top: 89.4%;
+            right: 34.3%;
+        }
+
+        .year55 {
+            top: 90.6%;
+            right: 37.7%;
+        }
+
+        .year56 {
+            top: 91.9%;
+            right: 40.9%;
+        }
+
+        .year57 {
+            top: 93.4%;
+            right: 44.3%;
+        }
+
+        .year61 {
+            top: 93.4%;
+            left: 43.5%;
+        }
+
+        .year62 {
+            top: 91.9%;
+            left: 40.2%;
+        }
+
+        .year63 {
+            top: 90.6%;
+            left: 36.9%;
+        }
+
+        .year64 {
+            top: 89.4%;
+            left: 33.7%;
+        }
+
+        .year65 {
+            top: 88%;
+            left: 30.7%;
+        }
+
+        .year66 {
+            top: 86.9%;
+            left: 27.2%;
+        }
+
+        .year67 {
+            top: 85.3%;
+            left: 23.9%;
+        }
+
+        .year71 {
+            top: 78%;
+            left: 16.5%;
+        }
+
+        .year72 {
+            top: 74.6%;
+            left: 15.3%;
+        }
+
+        .year73 {
+            top: 71.5%;
+            left: 13.9%;
+        }
+
+        .year74 {
+            top: 68.1%;
+            left: 12.6%;
+        }
+
+        .year75 {
+            top: 65%;
+            left: 11.4%;
+        }
+
+        .year76 {
+            top: 61.7%;
+            left: 9.9%;
+        }
+
+        .year77 {
+            top: 58.5%;
+            left: 8.7%;
+        }
+
+        .year1 {
+            top: 48.6%;
+            left: 8.9%;
+        }
+
+        .year2 {
+            top: 45.5%;
+            left: 9.9%;
+        }
+
+        .year3 {
+            top: 42.2%;
+            left: 11.2%;
+        }
+
+        .year4 {
+            top: 39%;
+            left: 12.7%;
+        }
+
+        .year5 {
+            top: 35.6%;
+            left: 13.9%;
+        }
+
+        .year6 {
+            top: 32.4%;
+            left: 15.4%;
+        }
+
+        .year7 {
+            top: 29.3%;
+            left: 16.7%;
+        }
+
+        .year11 {
+            top: 21.9%;
+            left: 24%;
+        }
+
+        .year12 {
+            top: 20.8%;
+            left: 27.1%;
+        }
+
+        .year13 {
+            top: 19.4%;
+            left: 30.4%;
+        }
+
+        .year14 {
+            top: 18%;
+            left: 33.6%;
+        }
+
+        .year15 {
+            top: 16.7%;
+            left: 37%;
+        }
+
+        .year16 {
+            top: 15.4%;
+            left: 40.2%;
+        }
+
+        .year17 {
+            top: 14.3%;
+            left: 43.5%;
+        }
+
+        .aspect-card {
+            border-radius: 20px;
+            width: 400px;
+            /*box-shadow: 0px 0px 4px 0px #00000040;*/
+        }
+
+        .aspect-card__firstHeader {
+            font-weight: 700;
+            font-size: 17px;
+            line-height: 100%;
+            text-align: center;
+            vertical-align: middle;
+            text-transform: uppercase;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            background: linear-gradient(270deg, #145833 0%, #207045 100%);
+            color: rgba(255, 255, 255, 1);
+            padding: 17px;
+            width: 100%;
+        }
+
+        .aspect-card__firstBody {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 12px;
+            line-height: 100%;
+            text-align: center;
+            vertical-align: middle;
+            padding: 10px;
+            background: rgba(249, 249, 247, 1);
+            color: rgba(29, 97, 59, 1);
+        }
+
+        .aspect-card__triad {
+            position: relative;
+        }
+
+        .aspect-card__triad img {
+            width: 237px;
+        }
+
+        .aspect-card__number {
+            font-weight: 700;
+            font-size: 24px;
+            line-height: 100%;
+            text-align: center;
+            vertical-align: middle;
+            color: rgba(249, 249, 247, 1);
+            width: 28.3px;
+        }
+
+        .aspect-card .r,
+        .aspect-card .t {
+            position: absolute;
+            top: 30px;
+            left: 8px;
+        }
+
+        .aspect-card .s,
+        .aspect-card .u {
+            position: absolute;
+            top: 10px;
+            left: 105px;
+        }
+
+        .aspect-card .y,
+        .aspect-card .v {
+            position: absolute;
+            top: 30px;
+            right: 8px;
+        }
+
+        .aspect-card__firstBody p {
+            font-weight: 700;
+            font-size: 16px;
+            line-height: 100%;
+            color: rgba(29, 97, 59, 1);
+        }
+
+        .aspect-card__secondHeader {
+            padding: 13px;
+            width: 100%;
+            font-weight: 600;
+            font-size: 15px;
+            line-height: 100%;
+            text-align: center;
+            vertical-align: middle;
+            text-transform: uppercase;
+            background: linear-gradient(270deg, #145833 0%, #207045 100%);
+            color: rgba(255, 255, 255, 1);
+        }
+
+        .aspect-card__secondBody {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            position: relative;
+            padding: 10px 10px 30px 10px;
+            width: 100%;
+            background: rgba(249, 249, 247, 1);
+            color: rgba(29, 97, 59, 1);
+            font-weight: 600;
+            font-size: 12px;
+            line-height: 100%;
+            text-align: center;
+            vertical-align: middle;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+        }
+
+        .aspect-card__secondBody p {
+            font-weight: 700;
+            font-size: 16px;
+            line-height: 100%;
+            color: rgba(29, 97, 59, 1);
+        }
+
+        .page-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            width: 100%;
+            gap: 20px;
+        }
+
+        .data-container {
+            display: flex;
+            padding: 0 40px;
+            gap: 40px;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .firstSection__matrixForm {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .firstSection__formItem {
+            width: 90px;
+            height: 65px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .firstSection__label {
+            font-weight: 700;
+            font-size: 18px;
+            line-height: 100%;
+            text-align: center;
+            vertical-align: middle;
+            color: rgba(29, 97, 59, 1);
+        }
+
+        .pill_container {
+            width: 90px;
+            position: relative;
+        }
+
+        .pill {
+            width: 100%;
+        }
+
+        .pill_value {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #422722;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .data-item {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .matrix_block {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+    </style>
+
+</head>
+<body>
+<div class="bg-layer"></div>
+
+<div class="top-bar"></div>
+<div class="bottom-bar"></div>
+
+<div class="page-container">
+    <div class="data-container">
+        <div class="data-item">
+            <div class="matrix_block">
+                <div class="numerlogyChart">
+                    <div class="shema">
+                        <img
+                                src="{{image}}"
+                                alt="Numerology Chart"
+                                class="matrixImg"
+                        />
+                        <div class="top1 circle large outlined">{{firstMatrix.b}}</div>
+                        <div class="top2 circle medium outlined">{{firstMatrix.b1}}</div>
+                        <div class="top3 circle small outlined">{{firstMatrix.b2}}</div>
+                        <div class="top4 circle small outlined">{{firstMatrix.m}}</div>
+
+                        <div class="topRight1 circle large outlined">{{firstMatrix.g}}</div>
+                        <div class="topRight2 circle medium outlined">{{firstMatrix.g1}}</div>
+                        <div class="topRight3 circle small outlined">{{firstMatrix.g2}}</div>
+
+                        <div class="right1 circle large outlined">{{firstMatrix.c}}</div>
+                        <div class="right2 circle medium outlined">{{firstMatrix.c1}}</div>
+                        <div class="right3 circle small outlined">{{firstMatrix.c2}}</div>
+                        <div class="right4 circle small outlined">{{firstMatrix.e2}}</div>
+                        <div class="right5 circle small outlined">{{firstMatrix.e1}}</div>
+
+                        <div class="center circle large outlined"> {{firstMatrix.e}}</div>
+
+                        <div class="bottomRight1 circle large outlined">{{firstMatrix.h}}</div>
+                        <div class="bottomRight2 circle medium outlined">{{firstMatrix.h1}}</div>
+                        <div class="bottomRight3 circle small outlined">{{firstMatrix.h2}}</div>
+                        <div class="bottomRight4 circle small outlined">{{firstMatrix.j}}</div>
+                        <div class="bottomRight5 circle small outlined">{{firstMatrix.k}}</div>
+                        <div class="bottomRight6 circle small outlined">{{firstMatrix.l}}</div>
+
+                        <div class="bottom1 circle large outlined">{{firstMatrix.d}}</div>
+                        <div class="bottom2 circle medium outlined">{{firstMatrix.d1}}</div>
+                        <div class="bottom3 circle small outlined">{{firstMatrix.d2}}</div>
+
+                        <div class="bottomLeft1 circle large outlined">{{firstMatrix.i}}</div>
+                        <div class="bottomLeft2 circle medium outlined">{{firstMatrix.i1}}</div>
+                        <div class="bottomLeft3 circle small outlined">{{firstMatrix.i2}}</div>
+
+                        <div class="left1 circle large outlined">{{firstMatrix.a}}</div>
+                        <div class="left2 circle medium outlined">{{firstMatrix.a1}}</div>
+                        <div class="left3 circle small outlined">{{firstMatrix.a2}}</div>
+                        <div class="left4 circle small  outlined ">{{firstMatrix.n}}</div>
+
+                        <div class="topLeft1 circle large outlined">{{firstMatrix.f}}</div>
+                        <div class="topLeft2 circle medium outlined">{{firstMatrix.f1}}</div>
+                        <div class="topLeft3 circle small outlined">{{firstMatrix.a2}}</div>
+
+
+                        <div class="year21 number">{{firstMatrix.b21_22}}</div>
+                        <div class="year22 number">{{firstMatrix.b22_23}}</div>
+                        <div class="year23 number">{{firstMatrix.b23_24}}</div>
+                        <div class="year24 number">{{firstMatrix.b25}}</div>
+                        <div class="year25 number">{{firstMatrix.b26_27}}</div>
+                        <div class="year26 number">{{firstMatrix.b27_28}}</div>
+                        <div class="year27 number">{{firstMatrix.b28_29}}</div>
+
+
+                        <div class="year31 number">{{firstMatrix.g31_32}}</div>
+                        <div class="year32 number">{{firstMatrix.g32_33}}</div>
+                        <div class="year33 number">{{firstMatrix.g33_34}}</div>
+                        <div class="year34 number">{{firstMatrix.g35}}</div>
+                        <div class="year35 number">{{firstMatrix.g36_37}}</div>
+                        <div class="year36 number">{{firstMatrix.g37_38}}</div>
+                        <div class="year37 number">{{firstMatrix.g38_39}}</div>
+
+
+                        <div class="year41 number">{{firstMatrix.c41_42}}</div>
+                        <div class="year42 number">{{firstMatrix.c42_43}}</div>
+                        <div class="year43 number">{{firstMatrix.c43_44}}</div>
+                        <div class="year44 number">{{firstMatrix.c45}}</div>
+                        <div class="year45 number">{{firstMatrix.c46_47}}</div>
+                        <div class="year46 number">{{firstMatrix.c47_48}}</div>
+                        <div class="year47 number">{{firstMatrix.c48_49}}</div>
+
+                        <div class="year51 number">{{firstMatrix.h51_52}}</div>
+                        <div class="year52 number">{{firstMatrix.h52_53}}</div>
+                        <div class="year53 number">{{firstMatrix.h53_54}}</div>
+                        <div class="year54 number">{{firstMatrix.h55}}</div>
+                        <div class="year55 number">{{firstMatrix.h56_57}}</div>
+                        <div class="year56 number">{{firstMatrix.h57_58}}</div>
+                        <div class="year57 number">{{firstMatrix.h58_59}}</div>
+
+
+                        <div class="year61 number">{{firstMatrix.d61_62}}</div>
+                        <div class="year62 number">{{firstMatrix.d62_63}}</div>
+                        <div class="year63 number">{{firstMatrix.d63_64}}</div>
+                        <div class="year64 number">{{firstMatrix.d65}}</div>
+                        <div class="year65 number">{{firstMatrix.d66_67}}</div>
+                        <div class="year66 number">{{firstMatrix.d67_68}}</div>
+                        <div class="year67 number">{{firstMatrix.d68_69}}</div>
+
+
+                        <div class="year71 number">{{firstMatrix.i71_72}}</div>
+                        <div class="year72 number">{{firstMatrix.i72_73}}</div>
+                        <div class="year73 number">{{firstMatrix.i73_74}}</div>
+                        <div class="year74 number">{{firstMatrix.i75}}</div>
+                        <div class="year75 number">{{firstMatrix.i76_77}}</div>
+                        <div class="year76 number">{{firstMatrix.i77_78}}</div>
+                        <div class="year77 number">{{firstMatrix.i78_79}}</div>
+
+                        <div class="year1 number">{{firstMatrix.a1_2}}</div>
+                        <div class="year2 number">{{firstMatrix.a2_3}}</div>
+                        <div class="year3 number">{{firstMatrix.a3_4}}</div>
+                        <div class="year4 number">{{firstMatrix.a5}}</div>
+                        <div class="year5 number">{{firstMatrix.a6_7}}</div>
+                        <div class="year6 number">{{firstMatrix.a7_8}}</div>
+                        <div class="year7 number">{{firstMatrix.a8_9}}</div>
+
+                        <div class="year11 number">{{firstMatrix.f11_12}}</div>
+                        <div class="year12 number">{{firstMatrix.f12_13}}</div>
+                        <div class="year13 number">{{firstMatrix.f13_14}}</div>
+                        <div class="year14 number">{{firstMatrix.f15}}</div>
+                        <div class="year15 number">{{firstMatrix.f16_17}}</div>
+                        <div class="year16 number">{{firstMatrix.f17_18}}</div>
+                        <div class="year17 number">{{firstMatrix.f18_19}}</div>
+                    </div>
+                </div>
+
+                <div class="firstSection__matrixForm">
+                    <div class="firstSection__formItem">
+                        <label for="day" class="firstSection__label">{{translations.day}}</label>
+                        <div class="pill_container">
+                            <img src="{{pill}}" class="pill" alt="">
+                            <span class="pill_value">
+                                {{firstMatrix.day}}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="firstSection__formItem">
+                        <label for="month" class="firstSection__label">{{translations.month}}</label>
+                        <div class="pill_container">
+                            <img src="{{pill}}" class="pill" alt="">
+                            <span class="pill_value">
+                                {{firstMatrix.month}}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="firstSection__formItem">
+                        <label for="year" class="firstSection__label">{{translations.year}}</label>
+                        <div class="pill_container">
+                            <img src="{{pill}}" class="pill" alt="">
+                            <span class="pill_value">
+                                {{firstMatrix.year}}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="aspect-card">
+                <div class="aspect-card__firstHeader">{{translations.aside.title1}}</div>
+                <div class="aspect-card__firstBody">
+                    {{translations.aside.description1}}
+                    <div class="aspect-card__triad">
+                        <img src="{{triad}}" alt=""/>
+                        <span class="aspect-card__number r">{{firstMatrix.r}}</span>
+                        <span class="aspect-card__number s">{{firstMatrix.s}}</span>
+                        <span class="aspect-card__number y">{{firstMatrix.y}}</span>
+                    </div>
+                    <p>{{translations.aside.result1}}: {{firstMatrix.w}}</p>
+                </div>
+                <div class="aspect-card__secondHeader">{{translations.aside.title2}}</div>
+                <div class="aspect-card__secondBody">
+                    {{translations.aside.description2}}
+                    <div class="aspect-card__triad">
+                        <img src="{{triad}}" alt=""/>
+                        <span class="aspect-card__number t">{{firstMatrix.t}}</span>
+                        <span class="aspect-card__number u">{{firstMatrix.u}}</span>
+                        <span class="aspect-card__number v">{{firstMatrix.v}}</span>
+                    </div>
+                    <p>{{translations.aside.result2}}: {{firstMatrix.x}}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="data-item">
+            <div class="matrix_block">
+                <div class="numerlogyChart">
+                    <div class="shema">
+                        <img
+                                src="{{compatibilityImg}}"
+                                alt="Numerology Chart"
+                                class="matrixImg"
+                        />
+                        <div class="top1 circle large outlined">{{compatibilityMatrix.b}}</div>
+                        <div class="topRight1 circle large outlined">{{compatibilityMatrix.g}}</div>
+                        <div class="right1 circle large outlined">{{compatibilityMatrix.c}}</div>
+                        <div class="bottomRight1 circle large outlined">{{compatibilityMatrix.h}}</div>
+                        <div class="bottom1 circle large outlined">{{compatibilityMatrix.d}}</div>
+                        <div class="bottomLeft1 circle large outlined">{{compatibilityMatrix.i}}</div>
+                        <div class="left1 circle large outlined">{{compatibilityMatrix.a}}</div>
+                        <div class="topLeft1 circle large outlined">{{compatibilityMatrix.f}}</div>
+
+                        <div class="bottom2 circle medium outlined">{{compatibilityMatrix.d1}}</div>
+
+                        <div class="bottomRight4 circle small outlined">{{compatibilityMatrix.j}}</div>
+                        <div class="bottomRight5 circle small outlined">{{compatibilityMatrix.k}}</div>
+                        <div class="bottomRight6 circle small outlined">{{compatibilityMatrix.l}}</div>
+
+                        <div class="bottom3 circle small outlined">{{compatibilityMatrix.d2}}</div>
+                        <div class="right3 circle small outlined">{{compatibilityMatrix.c2}}</div>
+
+                        <div class="center circle large outlined">{{compatibilityMatrix.e}}</div>
+
+
+
+                        <div class="year21 number">{{compatibilityMatrix.b21_22}}</div>
+                        <div class="year22 number">{{compatibilityMatrix.b22_23}}</div>
+                        <div class="year23 number">{{compatibilityMatrix.b23_24}}</div>
+                        <div class="year24 number">{{compatibilityMatrix.b25}}</div>
+                        <div class="year25 number">{{compatibilityMatrix.b26_27}}</div>
+                        <div class="year26 number">{{compatibilityMatrix.b27_28}}</div>
+                        <div class="year27 number">{{compatibilityMatrix.b28_29}}</div>
+
+
+                        <div class="year31 number">{{compatibilityMatrix.g31_32}}</div>
+                        <div class="year32 number">{{compatibilityMatrix.g32_33}}</div>
+                        <div class="year33 number">{{compatibilityMatrix.g33_34}}</div>
+                        <div class="year34 number">{{compatibilityMatrix.g35}}</div>
+                        <div class="year35 number">{{compatibilityMatrix.g36_37}}</div>
+                        <div class="year36 number">{{compatibilityMatrix.g37_38}}</div>
+                        <div class="year37 number">{{compatibilityMatrix.g38_39}}</div>
+
+
+                        <div class="year41 number">{{compatibilityMatrix.c41_42}}</div>
+                        <div class="year42 number">{{compatibilityMatrix.c42_43}}</div>
+                        <div class="year43 number">{{compatibilityMatrix.c43_44}}</div>
+                        <div class="year44 number">{{compatibilityMatrix.c45}}</div>
+                        <div class="year45 number">{{compatibilityMatrix.c46_47}}</div>
+                        <div class="year46 number">{{compatibilityMatrix.c47_48}}</div>
+                        <div class="year47 number">{{compatibilityMatrix.c48_49}}</div>
+
+                        <div class="year51 number">{{compatibilityMatrix.h51_52}}</div>
+                        <div class="year52 number">{{compatibilityMatrix.h52_53}}</div>
+                        <div class="year53 number">{{compatibilityMatrix.h53_54}}</div>
+                        <div class="year54 number">{{compatibilityMatrix.h55}}</div>
+                        <div class="year55 number">{{compatibilityMatrix.h56_57}}</div>
+                        <div class="year56 number">{{compatibilityMatrix.h57_58}}</div>
+                        <div class="year57 number">{{compatibilityMatrix.h58_59}}</div>
+
+
+                        <div class="year61 number">{{compatibilityMatrix.d61_62}}</div>
+                        <div class="year62 number">{{compatibilityMatrix.d62_63}}</div>
+                        <div class="year63 number">{{compatibilityMatrix.d63_64}}</div>
+                        <div class="year64 number">{{compatibilityMatrix.d65}}</div>
+                        <div class="year65 number">{{compatibilityMatrix.d66_67}}</div>
+                        <div class="year66 number">{{compatibilityMatrix.d67_68}}</div>
+                        <div class="year67 number">{{compatibilityMatrix.d68_69}}</div>
+
+
+                        <div class="year71 number">{{compatibilityMatrix.i71_72}}</div>
+                        <div class="year72 number">{{compatibilityMatrix.i72_73}}</div>
+                        <div class="year73 number">{{compatibilityMatrix.i73_74}}</div>
+                        <div class="year74 number">{{compatibilityMatrix.i75}}</div>
+                        <div class="year75 number">{{compatibilityMatrix.i76_77}}</div>
+                        <div class="year76 number">{{compatibilityMatrix.i77_78}}</div>
+                        <div class="year77 number">{{compatibilityMatrix.i78_79}}</div>
+
+                        <div class="year1 number">{{compatibilityMatrix.a1_2}}</div>
+                        <div class="year2 number">{{compatibilityMatrix.a2_3}}</div>
+                        <div class="year3 number">{{compatibilityMatrix.a3_4}}</div>
+                        <div class="year4 number">{{compatibilityMatrix.a5}}</div>
+                        <div class="year5 number">{{compatibilityMatrix.a6_7}}</div>
+                        <div class="year6 number">{{compatibilityMatrix.a7_8}}</div>
+                        <div class="year7 number">{{compatibilityMatrix.a8_9}}</div>
+
+                        <div class="year11 number">{{compatibilityMatrix.f11_12}}</div>
+                        <div class="year12 number">{{compatibilityMatrix.f12_13}}</div>
+                        <div class="year13 number">{{compatibilityMatrix.f13_14}}</div>
+                        <div class="year14 number">{{compatibilityMatrix.f15}}</div>
+                        <div class="year15 number">{{compatibilityMatrix.f16_17}}</div>
+                        <div class="year16 number">{{compatibilityMatrix.f17_18}}</div>
+                        <div class="year17 number">{{compatibilityMatrix.f18_19}}</div>
+                    </div>
+                </div>
+                <div style="height: 73px"></div>
+            </div>
+            <div class="aspect-card">
+                <div class="aspect-card__firstHeader">{{translations.aside.title1}}</div>
+                <div class="aspect-card__firstBody">
+                    {{translations.aside.description1}}
+                    <div class="aspect-card__triad">
+                        <img src="{{triad}}" alt=""/>
+                        <span class="aspect-card__number r">{{compatibilityMatrix.r}}</span>
+                        <span class="aspect-card__number s">{{compatibilityMatrix.s}}</span>
+                        <span class="aspect-card__number y">{{compatibilityMatrix.y}}</span>
+                    </div>
+                    <p>{{translations.aside.result1}}: {{compatibilityMatrix.w}}</p>
+                </div>
+                <div class="aspect-card__secondHeader">{{translations.aside.title2}}</div>
+                <div class="aspect-card__secondBody">
+                    {{translations.aside.description2}}
+                    <div class="aspect-card__triad">
+                        <img src="{{triad}}" alt=""/>
+                        <span class="aspect-card__number t">{{compatibilityMatrix.t}}</span>
+                        <span class="aspect-card__number u">{{compatibilityMatrix.u}}</span>
+                        <span class="aspect-card__number v">{{compatibilityMatrix.v}}</span>
+                    </div>
+                    <p>{{translations.aside.result2}}: {{compatibilityMatrix.x}}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="data-item">
+            <div class="matrix_block">
+                <div class="numerlogyChart">
+                    <div class="shema">
+                        <img
+                                src="{{image}}"
+                                alt="Numerology Chart"
+                                class="matrixImg"
+                        />
+                        <div class="top1 circle large outlined">{{secondMatrix.b}}</div>
+                        <div class="top2 circle medium outlined">{{secondMatrix.b1}}</div>
+                        <div class="top3 circle small outlined">{{secondMatrix.b2}}</div>
+                        <div class="top4 circle small outlined">{{secondMatrix.m}}</div>
+
+                        <div class="topRight1 circle large outlined">{{secondMatrix.g}}</div>
+                        <div class="topRight2 circle medium outlined">{{secondMatrix.g1}}</div>
+                        <div class="topRight3 circle small outlined">{{secondMatrix.g2}}</div>
+
+                        <div class="right1 circle large outlined">{{secondMatrix.c}}</div>
+                        <div class="right2 circle medium outlined">{{secondMatrix.c1}}</div>
+                        <div class="right3 circle small outlined">{{secondMatrix.c2}}</div>
+                        <div class="right4 circle small outlined">{{secondMatrix.e2}}</div>
+                        <div class="right5 circle small outlined">{{secondMatrix.e1}}</div>
+
+                        <div class="center circle large outlined"> {{secondMatrix.e}}</div>
+
+                        <div class="bottomRight1 circle large outlined">{{secondMatrix.h}}</div>
+                        <div class="bottomRight2 circle medium outlined">{{secondMatrix.h1}}</div>
+                        <div class="bottomRight3 circle small outlined">{{secondMatrix.h2}}</div>
+                        <div class="bottomRight4 circle small outlined">{{secondMatrix.j}}</div>
+                        <div class="bottomRight5 circle small outlined">{{secondMatrix.k}}</div>
+                        <div class="bottomRight6 circle small outlined">{{secondMatrix.l}}</div>
+
+                        <div class="bottom1 circle large outlined">{{secondMatrix.d}}</div>
+                        <div class="bottom2 circle medium outlined">{{secondMatrix.d1}}</div>
+                        <div class="bottom3 circle small outlined">{{secondMatrix.d2}}</div>
+
+                        <div class="bottomLeft1 circle large outlined">{{secondMatrix.i}}</div>
+                        <div class="bottomLeft2 circle medium outlined">{{secondMatrix.i1}}</div>
+                        <div class="bottomLeft3 circle small outlined">{{secondMatrix.i2}}</div>
+
+                        <div class="left1 circle large outlined">{{secondMatrix.a}}</div>
+                        <div class="left2 circle medium outlined">{{secondMatrix.a1}}</div>
+                        <div class="left3 circle small outlined">{{secondMatrix.a2}}</div>
+                        <div class="left4 circle small  outlined ">{{secondMatrix.n}}</div>
+
+                        <div class="topLeft1 circle large outlined">{{secondMatrix.f}}</div>
+                        <div class="topLeft2 circle medium outlined">{{secondMatrix.f1}}</div>
+                        <div class="topLeft3 circle small outlined">{{secondMatrix.a2}}</div>
+
+
+                        <div class="year21 number">{{secondMatrix.b21_22}}</div>
+                        <div class="year22 number">{{secondMatrix.b22_23}}</div>
+                        <div class="year23 number">{{secondMatrix.b23_24}}</div>
+                        <div class="year24 number">{{secondMatrix.b25}}</div>
+                        <div class="year25 number">{{secondMatrix.b26_27}}</div>
+                        <div class="year26 number">{{secondMatrix.b27_28}}</div>
+                        <div class="year27 number">{{secondMatrix.b28_29}}</div>
+
+
+                        <div class="year31 number">{{secondMatrix.g31_32}}</div>
+                        <div class="year32 number">{{secondMatrix.g32_33}}</div>
+                        <div class="year33 number">{{secondMatrix.g33_34}}</div>
+                        <div class="year34 number">{{secondMatrix.g35}}</div>
+                        <div class="year35 number">{{secondMatrix.g36_37}}</div>
+                        <div class="year36 number">{{secondMatrix.g37_38}}</div>
+                        <div class="year37 number">{{secondMatrix.g38_39}}</div>
+
+
+                        <div class="year41 number">{{secondMatrix.c41_42}}</div>
+                        <div class="year42 number">{{secondMatrix.c42_43}}</div>
+                        <div class="year43 number">{{secondMatrix.c43_44}}</div>
+                        <div class="year44 number">{{secondMatrix.c45}}</div>
+                        <div class="year45 number">{{secondMatrix.c46_47}}</div>
+                        <div class="year46 number">{{secondMatrix.c47_48}}</div>
+                        <div class="year47 number">{{secondMatrix.c48_49}}</div>
+
+                        <div class="year51 number">{{secondMatrix.h51_52}}</div>
+                        <div class="year52 number">{{secondMatrix.h52_53}}</div>
+                        <div class="year53 number">{{secondMatrix.h53_54}}</div>
+                        <div class="year54 number">{{secondMatrix.h55}}</div>
+                        <div class="year55 number">{{secondMatrix.h56_57}}</div>
+                        <div class="year56 number">{{secondMatrix.h57_58}}</div>
+                        <div class="year57 number">{{secondMatrix.h58_59}}</div>
+
+
+                        <div class="year61 number">{{secondMatrix.d61_62}}</div>
+                        <div class="year62 number">{{secondMatrix.d62_63}}</div>
+                        <div class="year63 number">{{secondMatrix.d63_64}}</div>
+                        <div class="year64 number">{{secondMatrix.d65}}</div>
+                        <div class="year65 number">{{secondMatrix.d66_67}}</div>
+                        <div class="year66 number">{{secondMatrix.d67_68}}</div>
+                        <div class="year67 number">{{secondMatrix.d68_69}}</div>
+
+
+                        <div class="year71 number">{{secondMatrix.i71_72}}</div>
+                        <div class="year72 number">{{secondMatrix.i72_73}}</div>
+                        <div class="year73 number">{{secondMatrix.i73_74}}</div>
+                        <div class="year74 number">{{secondMatrix.i75}}</div>
+                        <div class="year75 number">{{secondMatrix.i76_77}}</div>
+                        <div class="year76 number">{{secondMatrix.i77_78}}</div>
+                        <div class="year77 number">{{secondMatrix.i78_79}}</div>
+
+                        <div class="year1 number">{{secondMatrix.a1_2}}</div>
+                        <div class="year2 number">{{secondMatrix.a2_3}}</div>
+                        <div class="year3 number">{{secondMatrix.a3_4}}</div>
+                        <div class="year4 number">{{secondMatrix.a5}}</div>
+                        <div class="year5 number">{{secondMatrix.a6_7}}</div>
+                        <div class="year6 number">{{secondMatrix.a7_8}}</div>
+                        <div class="year7 number">{{secondMatrix.a8_9}}</div>
+
+                        <div class="year11 number">{{secondMatrix.f11_12}}</div>
+                        <div class="year12 number">{{secondMatrix.f12_13}}</div>
+                        <div class="year13 number">{{secondMatrix.f13_14}}</div>
+                        <div class="year14 number">{{secondMatrix.f15}}</div>
+                        <div class="year15 number">{{secondMatrix.f16_17}}</div>
+                        <div class="year16 number">{{secondMatrix.f17_18}}</div>
+                        <div class="year17 number">{{secondMatrix.f18_19}}</div>
+                    </div>
+                </div>
+
+                <div class="firstSection__matrixForm">
+                    <div class="firstSection__formItem">
+                        <label for="day" class="firstSection__label">{{translations.day}}</label>
+                        <div class="pill_container">
+                            <img src="{{pill}}" class="pill" alt="">
+                            <span class="pill_value">
+                                {{secondMatrix.day}}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="firstSection__formItem">
+                        <label for="month" class="firstSection__label">{{translations.month}}</label>
+                        <div class="pill_container">
+                            <img src="{{pill}}" class="pill" alt="">
+                            <span class="pill_value">
+                                {{secondMatrix.month}}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="firstSection__formItem">
+                        <label for="year" class="firstSection__label">{{translations.year}}</label>
+                        <div class="pill_container">
+                            <img src="{{pill}}" class="pill" alt="">
+                            <span class="pill_value">
+                                {{secondMatrix.year}}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="aspect-card">
+                <div class="aspect-card__firstHeader">{{translations.aside.title1}}</div>
+                <div class="aspect-card__firstBody">
+                    {{translations.aside.description1}}
+                    <div class="aspect-card__triad">
+                        <img src="{{triad}}" alt=""/>
+                        <span class="aspect-card__number r">{{secondMatrix.r}}</span>
+                        <span class="aspect-card__number s">{{secondMatrix.s}}</span>
+                        <span class="aspect-card__number y">{{secondMatrix.y}}</span>
+                    </div>
+                    <p>{{translations.aside.result1}}: {{secondMatrix.w}}</p>
+                </div>
+                <div class="aspect-card__secondHeader">{{translations.aside.title2}}</div>
+                <div class="aspect-card__secondBody">
+                    {{translations.aside.description2}}
+                    <div class="aspect-card__triad">
+                        <img src="{{triad}}" alt=""/>
+                        <span class="aspect-card__number t">{{secondMatrix.t}}</span>
+                        <span class="aspect-card__number u">{{secondMatrix.u}}</span>
+                        <span class="aspect-card__number v">{{secondMatrix.v}}</span>
+                    </div>
+                    <p>{{translations.aside.result2}}: {{secondMatrix.x}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

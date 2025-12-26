@@ -1,0 +1,211 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Language {
+  RU
+  EN
+  FI
+  SV
+}
+
+enum MatrixType {
+  GENERAL
+  FINANCE
+  COMPATIBILITY
+  CHILD
+  PROGNOSIS
+}
+
+model MatrixCategory {
+  id     Int        @id @default(autoincrement())
+  slug   String     @unique // "health_map", "finance_flow"
+  type   MatrixType
+  isPaid Boolean    @default(false)
+
+  translations CategoryTranslation[]
+  positions    MatrixPosition[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([type])
+}
+
+model CategoryTranslation {
+  id          Int      @id @default(autoincrement())
+  categoryId  Int
+  language    Language
+  title       String
+  description String?  @db.Text
+
+  category MatrixCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([categoryId, language])
+}
+
+model MatrixPosition {
+  id         Int    @id @default(autoincrement())
+  slug       String @unique
+  categoryId Int
+
+  sortOrder Int @default(0)
+
+  category MatrixCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  translations PositionTranslation[]
+
+  interpretations Interpretation[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PositionTranslation {
+  id          Int      @id @default(autoincrement())
+  positionId  Int
+  language    Language
+  name        String // Название точки: "Главный талант (a)"
+  description String?  @db.Text // Подсказка/тултип
+
+  position MatrixPosition @relation(fields: [positionId], references: [id], onDelete: Cascade)
+
+  @@unique([positionId, language])
+}
+
+// ---------------------------------------------------------
+// CONTENT
+// ---------------------------------------------------------
+
+// Толкование (Текст)
+model Interpretation {
+  id Int @id @default(autoincrement())
+
+  positionId Int // К какой точке относится
+  arcana     Int // Номер аркана (1-22)
+  language   Language // Язык
+
+  title   String? // Заголовок (если отличается от стандартного)
+  content String  @db.Text // HTML/Markdown текст трактовки
+
+  position MatrixPosition @relation(fields: [positionId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Гарантирует, что для одной точки + одного аркана + одного языка есть только 1 текст
+  @@unique([positionId, arcana, language])
+  @@index([positionId, language])
+}
+
+model MatrixProgram {
+  id   Int        @id @default(autoincrement())
+  type MatrixType // GENERAL, FINANCE, COMPATIBILITY, CHILD
+
+  m1 Int
+  m2 Int
+  m3 Int
+
+  isPaid Boolean @default(false)
+
+  translations ProgramTranslation[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Уникальность: тройка чисел в рамках одного типа матрицы не должна повторяться
+  @@unique([type, m1, m2, m3])
+}
+
+model ProgramTranslation {
+  id        Int      @id @default(autoincrement())
+  programId Int
+  language  Language
+
+  name        String
+  description String? @db.Text
+
+  program MatrixProgram @relation(fields: [programId], references: [id], onDelete: Cascade)
+
+  @@unique([programId, language])
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  translations ReviewTranslation[]
+}
+
+model ReviewTranslation {
+  id       Int      @id @default(autoincrement())
+  reviewId Int
+  language Language
+
+  content String @db.Text
+
+  review Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  @@unique([reviewId, language])
+}
+
+model Statistic {
+  id    Int    @id @default(autoincrement())
+  key   String @unique // "years", "clients", "calculations"
+  value String // "10+", "1500"
+
+  labels Json // { "RU": "...", "EN": "..." }
+}
+
+model Order {
+  id    String   @id @default(uuid())
+  email String
+  name  String   @default("Unknown User")
+  lang  Language @default(FI)
+
+  matrixType MatrixType
+
+  day   Int
+  month Int
+  year  Int
+
+  partnerDay      Int?
+  partnerMonth    Int?
+  partnerYear     Int?
+
+  stripeSessionId String? @unique
+  isPaid          Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model MatrixProduct {
+  id           String     @id @default(uuid())
+  type         MatrixType @unique
+
+  price        Decimal    @db.Decimal(10, 2)
+  oldPrice     Decimal?   @db.Decimal(10, 2)
+
+  translations Json
+
+  isActive     Boolean    @default(true)
+
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model AdminUser {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

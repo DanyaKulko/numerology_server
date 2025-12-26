@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        @page { size: A4 portrait; margin: 0; }
+
+        :root {
+            --footer-h: 50px;
+            --bar-color: #145833;
+            --content-margin-top: 50px;
+            --content-margin-bottom: 70px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+            font-family: 'DejaVu Sans', sans-serif;
+            /*overflow: hidden;*/
+            color: #33363F;
+            font-size: 12px;
+        }
+
+        .bg-layer {
+            position: fixed;
+            /*width: 100vw;*/
+            left: -5mm;
+            right: -5mm;
+            top: -5mm;
+            bottom: -5mm;
+            /* Важно: width/height auto, чтобы работали left/right */
+            width: auto;
+            height: auto;
+            z-index: -2;
+            background:
+                    linear-gradient(rgba(255,255,255,0.85), rgba(255,255,255,0.85)),
+                    url('{{{background}}}') center / cover no-repeat;
+        }
+
+        .watermark-layer {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 350px;
+            opacity: 0.12;
+            z-index: -1;
+        }
+        .watermark-layer img { width: 100%; height: auto; }
+
+        .bottom-bar {
+            position: fixed;
+            /*bottom: -1px;*/
+            /*left: -1vw;*/
+            /*right: -1vw;*/
+            /*width: 101vw;*/
+            bottom: -1px; /* Микро-сдвиг от белой линии снизу */
+
+            /* Вылеты влево и вправо */
+            left: -5mm;
+            right: -5mm;
+            width: auto; /* Элемент сам заполнит пространство + вылеты */
+
+            /*width: 100%;*/
+            height: var(--footer-h);
+            background: var(--bar-color);
+            z-index: 50;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 50px;
+            color: #fff;
+            font-weight: 300;
+            font-family: 'Monsterrat', sans-serif;
+            font-size: 12px;
+        }
+
+        .bottom-bar img {
+            width: 30px;
+            height: 30px;
+        }
+
+        .page-layout-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .header-space {
+            height: var(--content-margin-top);
+        }
+        .footer-space {
+            height: var(--content-margin-bottom);
+        }
+
+        .content-wrapper {
+            padding: 0 50px;
+        }
+
+        h1 { color: #1D613B; font-weight: 700; margin-top: 30px; }
+        .category-block:first-child h1:first-child { margin-top: 0; }
+
+        h2 { color: #2c3e50; font-size: 18px; margin-top: 20px; border-bottom: 1px solid #eee; }
+        .item-block {
+            font-size: 14px!important;
+        }
+
+        .page-break {
+            page-break-after: always;
+        }
+
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="bg-layer"></div>
+
+<div class="watermark-layer">
+    <img src="{{watermark}}" alt="">
+</div>
+
+<div class="bottom-bar">
+    <div>
+        <img src="{{watermark}}" alt="">
+    </div>
+    <div class="bottom-bar-center">
+        © Numerologia Akatemia. Kaikki oikeudet pidätetään.
+    </div>
+    <div class="bottom-bar-right">
+        www.numerologi.fi
+    </div>
+</div>
+
+<table class="page-layout-table">
+    <thead>
+    <tr>
+        <td>
+            <div class="header-space">&nbsp;</div>
+        </td>
+    </tr>
+    </thead>
+    <tfoot>
+    <tr>
+        <td>
+            <div class="footer-space">&nbsp;</div>
+        </td>
+    </tr>
+    </tfoot>
+    <tbody>
+    <tr>
+        <td>
+            <div class="content-wrapper">
+                CHILD CONTENT
+                {{#each sections}}
+                    <div class="category-block">
+                        {{#if this.title}}
+                            <h1 class="cat-title">{{this.title}}</h1>
+                        {{/if}}
+
+                        {{#if this.description}}
+                            <h2 class="cat-desc">{{{this.description}}}</h2>
+                        {{/if}}
+
+                        {{#each this.items}}
+                            <div class="item-block">
+                                <div class="item-title">{{this.title}}</div>
+                                <div class="item-content">
+                                    {{{this.content}}}
+                                </div>
+                            </div>
+                        {{/each}}
+                    </div>
+                {{/each}}
+
+                <div class="page-break"></div>
+
+                <h1>Programs</h1>
+                {{#each programs}}
+                    <h2>{{this.name}}</h2>
+                    <div class="desc">{{{this.description}}}</div>
+                {{/each}}
+            </div>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
