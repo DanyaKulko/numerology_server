@@ -26,7 +26,6 @@ class PaymentService {
             where.isPaid = false;
         }
 
-        // Выполняем два запроса параллельно для эффективности
         const [orders, total] = await prisma.$transaction([
             prisma.order.findMany({
                 where,
@@ -75,8 +74,8 @@ class PaymentService {
             },
         });
 
-        const successUrl = `https://${config.DOMAIN}/payment-success?session_id={CHECKOUT_SESSION_ID}`;
-        const cancelUrl = `https://${config.DOMAIN}/`;
+        const successUrl = `https://${config.DOMAIN}/en/payment/success?session_id={CHECKOUT_SESSION_ID}`;
+        const cancelUrl = `https://${config.DOMAIN}/en/payment/failed?session_id={CHECKOUT_SESSION_ID}`;
 
         const session = await this.stripe.checkout.sessions.create({
             payment_method_types: ['card'],
