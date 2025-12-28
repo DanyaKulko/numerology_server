@@ -29,7 +29,8 @@ class MatrixService {
             data: {
                 ...(data.price !== undefined && { price: data.price }),
                 ...(data.oldPrice !== undefined && { oldPrice: data.oldPrice }),
-                ...(data.isActive !== undefined && { isActive: data.isActive }),
+                // ...(data.isActive !== undefined && { isActive: data.isActive }),
+                isActive: true,
                 ...(data.translations !== undefined && { translations: data.translations }),
             }
         });

@@ -11,6 +11,7 @@ interface Config {
         SECRET_KEY: string;
         WEBHOOK_SECRET: string;
     };
+    DATABASE_URL: string;
     DOMAIN: string;
     NODE_ENV: string;
     PROD: boolean;
@@ -27,6 +28,7 @@ const config: Config = {
         SECRET_KEY: process.env.STRIPE_SECRET_KEY || "",
         WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET || "",
     },
+    DATABASE_URL: process.env.DATABASE_URL || "postgres",
     DOMAIN: process.env.DOMAIN || "localhost:3000",
     PROD: NODE_ENV === "production",
     DEV: NODE_ENV === "development",

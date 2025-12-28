@@ -1,13 +1,27 @@
-import puppeteer, { Browser } from 'puppeteer';
-import { PDFDocument } from 'pdf-lib';
+import puppeteer, {Browser} from 'puppeteer';
+import {PDFDocument} from 'pdf-lib';
 
 let browserInstance: Browser | null = null;
 
 async function getBrowser() {
     if (!browserInstance) {
         browserInstance = await puppeteer.launch({
+            executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium',
             headless: true,
-            args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--hide-scrollbars' ]
+            dumpio: true,
+            args: [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-gpu',
+                '--hide-scrollbars',
+                '--no-first-run',
+                '--disable-crash-reporter',
+                '--disable-breakpad',
+                '--disable-software-rasterizer',
+                '--user-data-dir=/tmp/puppeteer_user_data',
+                '--crash-dumps-dir=/tmp'
+            ]
         });
     }
     return browserInstance;
@@ -24,17 +38,21 @@ export const PdfRenderer = {
                 deviceScaleFactor: 2,
                 isMobile: false
             });
-            await page.setContent(html, { waitUntil: 'networkidle0', timeout: 60000 });
+            await page.setContent(html, {waitUntil: 'networkidle0', timeout: 60000});
             const buffer = await page.pdf({
                 // format: 'A4',
                 landscape: landscape,
                 printBackground: true,
                 preferCSSPageSize: true,
-                margin: { top: 0, bottom: 0, left: 0, right: 0 },
+                margin: {top: 0, bottom: 0, left: 0, right: 0},
                 width: landscape ? '297mm' : '210mm',
                 height: landscape ? '210mm' : '297mm',
             });
+            console.log("PDF rendered, size:", buffer.length);
             return Buffer.from(buffer);
+        } catch (e) {
+            console.error("PDF Rendering Error:", e);
+            throw e;
         } finally {
             await page.close();
         }

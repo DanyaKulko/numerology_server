@@ -147,7 +147,6 @@ class PaymentService {
                                 }
                                 : null;
 
-                            // Генерируем полный отчет
                             const pdfBuffer = await generator.generateFull({
                                 day: order.day,
                                 month: order.month,
@@ -158,7 +157,7 @@ class PaymentService {
                             });
 
                             if (pdfBuffer) {
-                                // await sendPaymentSuccessEmail(order.email, pdfBuffer);
+                                await this.sendPaymentSuccessEmail(order.email, pdfBuffer);
                                 logger.info(`Email sent for order ${order.id}`);
                             }
                         } catch (e) {
@@ -175,6 +174,50 @@ class PaymentService {
 
         return {received: true};
     }
+
+    async sendPaymentSuccessEmail(to: string, pdfBuffer: Buffer): Promise<void> {
+        const url = "https://numerology-email.qteam.dev/api/send-email";
+        const subject = 'Kiitos tilauksesta';
+
+        const textMessage = [
+            'Hei,',
+            '',
+            'Lämmin kiitos ostoksestasi!',
+            '',
+            'Liitteenä löydät syntymäpäiväsi perusteella laaditun numerologisen tulkinnan PDF-muodossa. Toivottavasti löydät siitä oivalluksia ja inspiraatiota omalle polullesi.',
+            '',
+            'Ystävällisin terveisin',
+            'Marina Spirit',
+            'Numerologian Akatemia'
+        ].join('\n');
+
+        try {
+            const formData = new FormData();
+            formData.append('email', to);
+            formData.append('subject', subject);
+            formData.append('text', textMessage);
+            formData.append('html', textMessage);
+
+            const pdfBlob = new Blob([pdfBuffer as BlobPart], { type: 'application/pdf' });
+            formData.append('pdf', pdfBlob, 'report.pdf');
+
+            const response = await fetch(url, {
+                method: 'POST',
+                body: formData,
+                signal: AbortSignal.timeout(15000)
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                logger.error(`Email relay failed: ${response.status}, ${errorText}`);
+            } else {
+                logger.info(`Relay server accepted email for ${to}`);
+            }
+        } catch (error) {
+            logger.error(`Error sending email: ${JSON.stringify(error)}`, {error});
+        }
+    }
+
 }
 
 export default new PaymentService()

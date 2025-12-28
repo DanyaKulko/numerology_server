@@ -58,14 +58,12 @@ export async function getReportData(matrixNumbers: any, lang: Language = 'FI', t
         if (catDB) {
             if (catDB.translations.length > 0) {
                 catTitle = catDB.translations[0].title;
-                console.log(catDB.translations[0].title)
                 catDesc = catDB.translations[0].description;
             } else {
                 catTitle = `[NO_TRANS: ${sectionConfig.categorySlug}]`;
             }
         }
 
-        console.log('sectionConfig.items', sectionConfig.items)
         const items = sectionConfig.items.map(itemConfig => {
             const arcana = Number(matrixNumbers[itemConfig.matrixKey]);
             const posDB = positionsDB.find((p: any) => p.slug === itemConfig.positionSlug);
@@ -80,7 +78,6 @@ export async function getReportData(matrixNumbers: any, lang: Language = 'FI', t
                 const interpretation = posDB.interpretations.find((i: any) => i.arcana === arcana);
 
                 if (interpretation && interpretation.content) {
-                    console.log('interpretation.content', interpretation.content)
                     itemContent = interpretation.content;
                 } else {
                     itemContent = `<span style="color:red; font-weight:bold;">

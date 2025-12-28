@@ -1,0 +1,14 @@
+.idea
+.vscode
+
+node_modules
+dist
+.DS_Store
+.git
+
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+

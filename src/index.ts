@@ -70,7 +70,7 @@ buildServer().then(async (server) => {
 
         await server.ready();
 
-        await server.listen({ port: config.PORT });
+        await server.listen({ port: config.PORT, host: '0.0.0.0' });
         logger.info(`Server listening at http://localhost:${config.PORT}`);
 
         if (!config.PROD) {

@@ -1,11 +1,10 @@
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@prisma/client';
+import config from "../config";
 
-const connectionString = 'postgresql://numerology:securepassword123@0.0.0.0:5432/numerology_db?schema=public';
-
-const pool = new Pool({ connectionString });
+const pool = new Pool({ connectionString: config.DATABASE_URL });
 
 const adapter = new PrismaPg(pool);
 
-export const prisma = new PrismaClient({ adapter });
+export const prisma = new PrismaClient({adapter});
