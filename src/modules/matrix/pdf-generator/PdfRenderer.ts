@@ -27,6 +27,14 @@ async function getBrowser() {
     return browserInstance;
 }
 
+process.on('exit', async () => {
+    if (browserInstance) {
+        console.log("Closing Puppeteer browser instance...");
+        await browserInstance.close();
+        console.log("Puppeteer browser instance closed.");
+    }
+});
+
 export const PdfRenderer = {
     async renderHtml(html: string, landscape: boolean): Promise<Buffer> {
         const browser = await getBrowser();

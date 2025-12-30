@@ -30,6 +30,8 @@ const getStructure = (type: MatrixCategoryType) => {
 export async function getReportData(matrixNumbers: any, lang: Language = 'FI', type: MatrixCategoryType = 'GENERAL') {
     console.log(`🔍 Building Report: ${type} [${lang}]`);
 
+    const numbersObj = type === 'COMPATIBILITY' ? matrixNumbers.compatibilityMatrix : matrixNumbers;
+
     const structure = getStructure(type);
 
     const categorySlugs = structure.map(s => s.categorySlug);
@@ -65,7 +67,7 @@ export async function getReportData(matrixNumbers: any, lang: Language = 'FI', t
         }
 
         const items = sectionConfig.items.map(itemConfig => {
-            const arcana = Number(matrixNumbers[itemConfig.matrixKey]);
+            const arcana = Number(numbersObj[itemConfig.matrixKey]);
             const posDB = positionsDB.find((p: any) => p.slug === itemConfig.positionSlug);
 
             let itemTitle = `[NOT_FOUND: Pos ${itemConfig.positionSlug}]`;

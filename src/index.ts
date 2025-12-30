@@ -14,6 +14,7 @@ import fastifyRawBody from "fastify-raw-body";
 import matrixRoutes from "./modules/matrix/matrix.routes";
 import authRoutes from "./modules/auth/auth.routes";
 import reportController from "./modules/report/report.controller";
+import siteStatusController from "./modules/site-status/site-status.controller";
 
 async function buildServer(): Promise<FastifyInstance> {
     const server = Fastify({ logger: false });
@@ -51,6 +52,7 @@ async function registerPlugins(server: FastifyInstance): Promise<void> {
 async function registerRoutes(server: FastifyInstance): Promise<void> {
     try {
         await reportController(server); // todo: adapt to route plugin
+        await siteStatusController(server); // todo: adapt to route plugin
         await server.register(authRoutes, { prefix: "api/auth" });
         await server.register(adminRoutes, { prefix: "api/admin" });
         await server.register(reviewsRoutes, { prefix: "api/reviews" });
